@@ -1,0 +1,560 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RosBag Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #1abc9c;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            color: var(--secondary-color);
+        }
+        
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .app-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .app-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 2.5rem;
+        }
+        
+        .app-subtitle {
+            color: var(--secondary-color);
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 25px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: #fff;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+        }
+        
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        .card-body {
+            padding: 20px;
+            background-color: #fff;
+        }
+        
+        .btn {
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 8px 16px;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover, .btn-danger:focus {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+        
+        .input-group {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
+        }
+        
+        #folderPath {
+            border-top-left-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 12px 15px;
+        }
+        
+        #scanBtn {
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            padding: 0 20px;
+        }
+        
+        .progress {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #e9ecef;
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            background-color: var(--accent-color);
+        }
+        
+        .table-responsive {
+            max-height: 60vh;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table th {
+            position: sticky;
+            top: 0;
+            background-color: var(--light-bg);
+            border-top: none;
+            font-weight: 600;
+            color: var(--secondary-color);
+            padding: 12px 15px;
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+        
+        .form-check-input {
+            cursor: pointer;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .file-name {
+            font-weight: 500;
+        }
+        
+        .file-path {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .file-duration {
+            font-family: monospace;
+            font-weight: 500;
+            color: var(--accent-color);
+        }
+        
+        .file-size {
+            font-weight: 500;
+        }
+        
+        .alert {
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .alert-scanning {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .stats-card {
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 15px;
+        }
+        
+        .stats-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
+        .stats-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .stats-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .stats-icon i {
+            font-size: 1.2rem;
+        }
+        
+        .stats-label {
+            font-weight: 500;
+            margin-bottom: 0;
+            flex-grow: 1;
+        }
+        
+        .stats-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0;
+            color: var(--primary-color);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* 模态框样式 */
+        .modal-content {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 15px 20px;
+        }
+        
+        .delete-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+        }
+        
+        .success-list, .failed-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .success-list li, .failed-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .success-list li:last-child, .failed-list li:last-child {
+            border-bottom: none;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 2rem;
+            }
+            
+            .card-header {
+                padding: 12px 15px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .stats-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+                background-color: #fff;
+                border-radius: var(--border-radius);
+                margin-bottom: 10px;
+            }
+            
+            .stats-icon {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .stats-value {
+                margin-top: 5px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        /* 工具提示和徽章 */
+        .badge {
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 30px;
+        }
+        
+        .badge-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .badge-success {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: #dfe6e9;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h5 {
+            font-weight: 600;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #95a5a6;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="app-header">
+            <h1 class="app-title">RosBag Manager</h1>
+            <p class="app-subtitle">高效管理和查看RosBag文件</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-folder-open me-2"></i>选择RosBag目录</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input type="text" id="folderPath" class="form-control" placeholder="请输入RosBag文件夹路径...">
+                    <button class="btn btn-primary" id="scanBtn">
+                        <i class="fas fa-search me-2"></i>扫描
+                    </button>
+                </div>
+                
+                <div class="progress hidden" id="progressBar">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                </div>
+                
+                <div class="alert alert-scanning hidden" id="scanningAlert">
+                    <i class="fas fa-spinner fa-spin me-2"></i> 正在扫描文件夹，请稍候...
+                </div>
+                
+                <div class="alert alert-error hidden" id="errorAlert"></div>
+            </div>
+        </div>
+        
+        <div class="card hidden animate-fade-in" id="resultsCard">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-list me-2"></i>文件列表</h5>
+                <div>
+                    <button class="btn btn-sm btn-danger me-2 hidden" id="deleteBtn">
+                        <i class="fas fa-trash me-1"></i> 删除所选
+                    </button>
+                    <button class="btn btn-sm btn-primary" id="refreshBtn">
+                        <i class="fas fa-sync-alt me-1"></i> 刷新
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="bagsTable">
+                        <thead>
+                            <tr>
+                                <th width="40">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="selectAll">
+                                    </div>
+                                </th>
+                                <th>文件信息</th>
+                                <th width="120">时长</th>
+                                <th width="100">大小</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bagsTableBody">
+                            <!-- 数据将通过JavaScript填充 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="emptyState" class="empty-state hidden">
+                    <i class="fas fa-folder-open"></i>
+                    <h5>未找到RosBag文件</h5>
+                    <p>所选目录中没有找到.bag文件，请选择其他目录或检查文件路径。</p>
+                </div>
+            </div>
+            
+            <div class="card-body pt-0">
+                <div class="stats-card mt-3">
+                    <h6 class="stats-title"><i class="fas fa-chart-pie me-2"></i>统计信息</h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stats-item">
+                                <div class="stats-icon">
+                                    <i class="fas fa-file"></i>
+                                </div>
+                                <p class="stats-label">总文件数</p>
+                                <p class="stats-value" id="totalFiles">0</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-item">
+                                <div class="stats-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <p class="stats-label">总时长</p>
+                                <p class="stats-value" id="totalDuration">00:00:00</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-item">
+                                <div class="stats-icon">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                <p class="stats-label">总大小</p>
+                                <p class="stats-value"><span id="totalSize">0</span> MB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 删除确认模态框 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-trash me-2"></i>确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除以下文件吗？</p>
+                    <div class="success-list">
+                        <ul id="deleteFilesList" class="list-unstyled">
+                        </ul>
+                    </div>
+                    <div class="delete-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> 警告：此操作不可撤销！
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 删除结果模态框 -->
+    <div class="modal fade" id="deleteResultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-info-circle me-2"></i>删除结果</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="deleteSuccessDiv" class="mb-3">
+                        <h6 class="text-success"><i class="fas fa-check-circle me-2"></i> 成功删除:</h6>
+                        <div class="success-list">
+                            <ul id="deleteSuccessList" class="list-unstyled">
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="deleteFailedDiv" class="hidden">
+                        <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i> 删除失败:</h6>
+                        <div class="failed-list">
+                            <ul id="deleteFailedList" class="list-unstyled">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
